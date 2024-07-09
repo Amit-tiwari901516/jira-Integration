@@ -1,0 +1,125 @@
+<template>
+    <!--Spinner Section-->
+   <div class="spinner">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+            </lightning-spinner>
+        </template>
+    </div>
+  
+    <lightning-card>
+         <!--Main Page Section-->
+        <template if:true={MainPage}>
+            <div class="slds-m-around_medium">
+                <template if:true={tickets}>
+                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                        <thead>
+                            <tr>
+                                <th scope="col">Key</th>
+                                <th scope="col">Summary</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Assignee</th>
+                                <th scope="col">Update Assignee</th>
+                                <th scope="col">Attachments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={tickets} for:item="ticket">
+                                <tr key={ticket.key}>
+                                    <td><a href="#" onclick={handleTicketClick} data-id={ticket.key}>{ticket.key}</a></td>  
+                                    <td style="white-space: pre-wrap;">{ticket.summary}</td>
+                                    <td style="white-space: pre-wrap;">{ticket.status}</td>
+                                
+                                    <td> <lightning-combobox
+                                            name="assignee"
+                                            value={selectedAssigneesUser}
+                                            placeholder="Assignee User"
+                                            options={assigneeOptions}                           
+                                            onchange={handleAssigneeChange}
+                                            data-key={ticket.key}>
+                                        </lightning-combobox></td>
+                                    <!--<td><lightning-button label="Edit" onclick={handleEditIssue} data-id={ticket.key}></lightning-button></td>-->
+                                    <td>  <lightning-button label="Update" onclick={handleAssigneeUpdate} data-key={ticket.key}></lightning-button></td>
+                                    <td><lightning-button label="View" onclick={viewAttachmentsHandler} data-id={ticket.key}></lightning-button></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:true={error}>
+                    <div class="slds-text-color_error">{error}</div>
+                </template>
+            </div>
+        </template>
+
+        <!--Comment Page Section-->
+        <template if:true={commentPage}>
+            <lightning-card title="Ticket Comments" icon-name="utility:knowledge_base">
+
+                <lightning-button label="Back" slot="actions" onclick={navigateBack}></lightning-button>
+            
+                <div class="slds-m-around_medium">
+                   <br/>
+                    <template if:true={comments}>
+                        <div class="comment-container">
+                            <template for:each={comments} for:item="comment">
+                                <div key={comment.id} style="margin-bottom: 1rem;
+                                                border: 1px solid #bbb2b2;
+                                                border-radius: 5px;
+                                                padding: 1rem;">
+                                    <div>
+                                        <b>{comment.authorName}  &nbsp;&nbsp; {comment.updated}</b>
+                                    </div>
+                                    <div class="comment-body">
+                                        <pre style=" font-family: Arial, sans-serif;">{comment.body}</pre>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template if:true={error}>
+                        <div class="slds-text-color_error">{error}</div>
+                    </template>
+                </div>
+            </lightning-card>
+        </template>
+
+        <!--View Button Click fetch Attachment Section-->
+        <template if:true={attachmentsSection}>
+            <lightning-card title="Attachments" icon-name="utility:attach">
+                <lightning-button label="Back" slot="actions" onclick={navigateBack}></lightning-button>
+
+            <template if:true={attachments}>
+                    <template for:each={attachments} for:item="attachment">
+                        <div key={attachment.id} class="slds-m-around_medium">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-size_1-of-2">
+                                    <p><strong>ID:</strong> {attachment.id}</p>
+                                    <p><b>Filename:</b> {attachment.filename}</p>                              
+                                    <p><strong>MIME Type:</strong> {attachment.mimeType}</p>
+                                </div>
+                            </div>
+                            <div class="slds-m-top_small">
+                                <a href={attachment.content} target="_blank">
+                                    <lightning-button variant="brand" label="Download"></lightning-button>
+                                </a>
+                                <!--
+                                 <a href={attachment.content} target="_blank"><span style="background-color: rgb(1, 118, 211);color: white;border-radius:4px;padding: 7px 10px;">Download</span></a> 
+                                -->
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template if:true={attachmentError}>
+                    <p class="slds-text-color_error">{attachmentError}</p>
+                </template>
+
+                <template if:true={attachmentError}>
+                    <p class="slds-text-color_error">{attachmentError}</p>
+                </template>
+            </lightning-card>
+        </template>
+    </lightning-card>
+    
+</template>
